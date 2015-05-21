@@ -8,8 +8,6 @@ package psn.com.image;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -26,6 +24,7 @@ import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
 import psn.com.ocr.model.OCRRegion;
+import psn.com.ocr.model.OCRRegionSetup;
 
 /**
  *
@@ -42,7 +41,8 @@ public class ImageController implements Serializable{
     private UploadedFile    image = null;
     private String          szDefaultImage = null;
     
-    private List<OCRRegion> lOCRRegions;
+    //private List<OCRRegion> lOCRRegions;
+    private OCRRegionSetup pRegionSetup;
     
     @PostConstruct
     public void ImageController_PostConstruct() 
@@ -54,8 +54,7 @@ public class ImageController implements Serializable{
         szDefaultImage = servletContext.getRealPath(defaultBackground);
         
         // create the region list
-        
-        lOCRRegions = new ArrayList<>();
+        pRegionSetup = new OCRRegionSetup();
         
     }
     
@@ -93,32 +92,33 @@ public class ImageController implements Serializable{
         
         // assign default name
         
-        ocr_region.setName("Region "+(lOCRRegions.size()+1));
+        ocr_region.setName("Region "+(pRegionSetup.getlRegions().size()+1));
         
-        lOCRRegions.add(ocr_region);
+        pRegionSetup.addOCRRegion(ocr_region);
     }
 
-    public List<OCRRegion> getlOCRRegions() {
-        return lOCRRegions;
-    }
-
-    public void setlOCRRegions(List<OCRRegion> lOCRRegions) {
-        this.lOCRRegions = lOCRRegions;
-    }
     
     public void clearOCRInfo() {
         
         // delete all regions
         
-        lOCRRegions.clear();
+        pRegionSetup.clearSetup();
     }
     
     public void saveOCRTemplate() throws ParserConfigurationException, TransformerConfigurationException, TransformerException
     {
         
-        pOCRRegionBL.createXMLRegions(lOCRRegions, "smen");
+        pOCRRegionBL.createXMLRegions(pRegionSetup, "smen");
         
         image=null;
         clearOCRInfo();
     }    
+
+    public OCRRegionSetup getpRegionSetup() {
+        return pRegionSetup;
+    }
+
+    public void setpRegionSetup(OCRRegionSetup pRegionSetup) {
+        this.pRegionSetup = pRegionSetup;
+    }
 }

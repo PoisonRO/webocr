@@ -6,7 +6,6 @@
 package psn.com.ocr.bl;
 
 import java.io.File;
-import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import psn.com.ocr.model.OCRRegion;
@@ -23,6 +22,7 @@ import javax.xml.transform.stream.StreamResult;
  
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import psn.com.ocr.model.OCRRegionSetup;
 
 
 /**
@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
 public class OCRRegionBL {
 
     
-    public int createXMLRegions(List<OCRRegion> lRegions,String szTemplateName) throws ParserConfigurationException, TransformerConfigurationException, TransformerException
+    public int createXMLRegions(OCRRegionSetup OCRSetup,String szTemplateName) throws ParserConfigurationException, TransformerConfigurationException, TransformerException
     {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -51,7 +51,7 @@ public class OCRRegionBL {
         // add root element
         doc.appendChild(rootElement);
         
-        for (OCRRegion region : lRegions)  {
+        for (OCRRegion region : OCRSetup.getlRegions())  {
             Element elem_region = doc.createElement("region");
             elem_region.setAttribute("name", region.getName());
             

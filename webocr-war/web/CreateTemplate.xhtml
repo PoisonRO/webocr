@@ -23,7 +23,7 @@ and open the template in the editor.
             
             <p:layoutUnit header="OCR Regions" position="east" size="400" resizable="true" collapsible="true" effect="drop">
 
-                <p:dataTable value="#{ImageControllerBean.lOCRRegions}" var="item" editable="true" id="ocrregions" editMode="cell">
+                <p:dataTable value="#{ImageControllerBean.getpRegionSetup().lRegions}" var="item" editable="true" id="ocrregions" editMode="cell">
                     
                    <p:column headerText="X1">
                         <p:cellEditor>
