@@ -11,26 +11,34 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.extensions.event.ImageAreaSelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
-import psn.com.ocr.structures.OCRRegion;
+
+import psn.com.ocr.model.OCRRegion;
 
 /**
  *
  * @author dan
  */
 
-@ManagedBean(name = "ImageControllerBean")
 @SessionScoped
+@ManagedBean(name = "ImageControllerBean" )
 public class ImageController implements Serializable{
- 
+    
+    @EJB
+    psn.com.ocr.bl.OCRRegionBL  pOCRRegionBL;
+            
     private UploadedFile    image = null;
     private String          szDefaultImage = null;
     
@@ -49,8 +57,6 @@ public class ImageController implements Serializable{
         
         lOCRRegions = new ArrayList<>();
         
-        OCRRegion ocr_region = new OCRRegion();
-        lOCRRegions.add(ocr_region);
     }
     
     public void handleFileUpload(FileUploadEvent event) {
@@ -85,6 +91,10 @@ public class ImageController implements Serializable{
         ocr_region.setY1(e.getY1());
         ocr_region.setY2(e.getY2());
         
+        // assign default name
+        
+        ocr_region.setName("Region "+(lOCRRegions.size()+1));
+        
         lOCRRegions.add(ocr_region);
     }
 
@@ -95,6 +105,20 @@ public class ImageController implements Serializable{
     public void setlOCRRegions(List<OCRRegion> lOCRRegions) {
         this.lOCRRegions = lOCRRegions;
     }
-     
     
+    public void clearOCRInfo() {
+        
+        // delete all regions
+        
+        lOCRRegions.clear();
+    }
+    
+    public void saveOCRTemplate() throws ParserConfigurationException, TransformerConfigurationException, TransformerException
+    {
+        
+        pOCRRegionBL.createXMLRegions(lOCRRegions, "smen");
+        
+        image=null;
+        clearOCRInfo();
+    }    
 }

@@ -3,7 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package psn.com.ocr.structures;
+package psn.com.ocr.model;
+
+/**
+ *
+ * @author dan
+ */
 
 import java.io.Serializable;
 
@@ -11,13 +16,14 @@ import java.io.Serializable;
  *
  * @author dan
  */
+
 public class OCRRegion implements Serializable{
     
-    private int x1;
-    private int x2;
-    private int y1;
-    private int y2;
-    private String name;
+    public int x1;
+    public int x2;
+    public int y1;
+    public int y2;
+    public String name;
     
     public OCRRegion() {
         x1=-1;
@@ -26,7 +32,7 @@ public class OCRRegion implements Serializable{
         y2=-1;
         name=" ";
     }
-
+    
     public int getX1() {
         return x1;
     }
