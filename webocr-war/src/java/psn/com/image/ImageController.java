@@ -5,32 +5,96 @@
  */
 package psn.com.image;
 
-import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.extensions.event.ImageAreaSelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
+import psn.com.ocr.structures.OCRRegion;
+
 /**
  *
  * @author dan
  */
 
-@ManagedBean
-@ViewScoped
-public class ImageController {
+@ManagedBean(name = "ImageControllerBean")
+@SessionScoped
+public class ImageController implements Serializable{
  
-    private UploadedFile image = null;
+    private UploadedFile    image = null;
+    private String          szDefaultImage = null;
+    
+    private List<OCRRegion> lOCRRegions;
+    
+    @PostConstruct
+    public void ImageController_PostConstruct() 
+    {
+        String defaultBackground = "resources/img/webocr.png";
+
+        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        
+        szDefaultImage = servletContext.getRealPath(defaultBackground);
+        
+        // create the region list
+        
+        lOCRRegions = new ArrayList<>();
+        
+        OCRRegion ocr_region = new OCRRegion();
+        lOCRRegions.add(ocr_region);
+    }
     
     public void handleFileUpload(FileUploadEvent event) {
+        // get the uploaded file
         image = event.getFile();
     }
         
-    public StreamedContent getImage() {
+    public StreamedContent getImage() throws IOException  {
+        
+        // return the uploaded image
+        
         if (image != null) 
-            return new DefaultStreamedContent(new ByteArrayInputStream(image.getContents()), image.getContentType());
+            return new DefaultStreamedContent(image.getInputstream());  
         else
-            return new DefaultStreamedContent();
+            return new DefaultStreamedContent(new FileInputStream(szDefaultImage));
+        
+        // or the default image
+
     }
+    
+    public void selectAreaListener(final ImageAreaSelectEvent e) {  
+
+        //check click
+        if (e.getX1()==e.getX2() && e.getY1() == e.getY2()) return;
+         
+         
+        // create the new OCR Region
+        OCRRegion ocr_region = new OCRRegion();
+        
+        ocr_region.setX1(e.getX1());
+        ocr_region.setX2(e.getX2());
+        ocr_region.setY1(e.getY1());
+        ocr_region.setY2(e.getY2());
+        
+        lOCRRegions.add(ocr_region);
+    }
+
+    public List<OCRRegion> getlOCRRegions() {
+        return lOCRRegions;
+    }
+
+    public void setlOCRRegions(List<OCRRegion> lOCRRegions) {
+        this.lOCRRegions = lOCRRegions;
+    }
+     
+    
 }
