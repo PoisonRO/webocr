@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/templates/basicnavigation.xhtml">
+
+            <ui:define name="top">
+                Application Settings
+            </ui:define>
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form id="main_form">
+                        <p:commandButton process="@this" id="btnAdd" icon="ui-icon-plusthick" action="#{ApplicationSettings.setupNewSetting}" value="Add" onclick="PF('addSettingDlg').show();"/>
+                        <p:commandButton id="btnRefresh" value="Refresh"/>
+                        <p:commandButton id="btnStore" value="Commit"/>
+                        
+                        <br/>
+                        <br/>
+                        <p:dataTable value="#{ApplicationSettings.getpSettingsList()}" var="item" id="settingsTbl">
+                            <p:column style="width:25px">
+                                <p:commandButton icon="ui-icon-pencil">
+                                    
+                                </p:commandButton>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="AppKey"/>
+                                </f:facet>
+                                <h:outputText value="#{item.appKey}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="AppSetting"/>
+                                </f:facet>
+                                <h:outputText value="#{item.appSetting}"/>
+                            </p:column>
+                            
+                            <p:column style="width:25px">
+                                <p:commandButton  process="@this" id="smen" icon="ui-icon-trash" action="#{ApplicationSettings.selectSetting(item)}" onclick="PF('deleteSettingDlg').show();"/>
+                            </p:column>
+                            
+                        </p:dataTable>
+                        
+                        <p:dialog header="Add Setting" widgetVar="addSettingDlg" modal="true" height="100" resizable="false">
+                            
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Setting" for="iNewSettingKey" />
+                                <h:inputText id="iNewSettingKey" value="#{ApplicationSettings.newSetting.appKey}" />
+                                <h:outputLabel value="Setting Value" for="iNewSettingValue" />
+                                <h:inputText id="iNewSettingValue" value="#{ApplicationSettings.newSetting.appSetting}"/>
+                            </h:panelGrid>
+                            <br/>
+                            <p:commandButton id="btnAddOk" value="OK" action="#{ApplicationSettings.addNewSetting()}" onclick="PF('addSettingDlg').hide();" update="main_form:settingsTbl"/>
+                            <p:commandButton id="btnAddCancel" value="Cancel" onclick="PF('addSettingDlg').hide();"/>
+                        </p:dialog>   
+                        
+                        <p:dialog header="Question" widgetVar="deleteSettingDlg" modal="true" height="100" resizable="false">
+                            <h:outputText value="Are you sure you want to delete this setting ?" />
+                            <br/>
+                            <h:outputText value="The application may not function after this operation." />
+                            <br/>
+                            <br/>
+                            <p:commandButton id="btnDeleteOk" value="OK" action="#{ApplicationSettings.deleteSelectedSetting()}" onclick="PF('deleteSettingDlg').hide();" update="main_form:settingsTbl"/>
+                            <p:commandButton id="btnDeleteCancel" value="Cancel" onclick="PF('deleteSettingDlg').hide();"/>
+                            
+                        </p:dialog>
+                    </h:form>
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

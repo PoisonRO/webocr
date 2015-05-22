@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package psn.com.image;
+package psn.com.ocr.image;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,7 +37,7 @@ import psn.com.ocr.model.OCRRegionSetup;
 public class ImageController implements Serializable{
     
     @EJB
-    psn.com.ocr.bl.OCRRegionBL  pOCRRegionBL;
+    private psn.com.ocr.bl.OCRRegionBL  pOCRRegionBL;
             
     private UploadedFile    image = null;
     private String          szDefaultImage = null;
